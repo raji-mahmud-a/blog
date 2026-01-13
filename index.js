@@ -3,14 +3,13 @@ import postRoutes from './routes/posts.routes.js';
 import { loadEnvFile } from 'node:process';
 import morgan from "morgan"
 import { randomUUID } from 'crypto';
-import Database from "./db/database.config.js"
+import { shutdown, init } from"./db/database.config.js"
 import http from "node:http"
 
 loadEnvFile()
 
 const s = express()
 const PORT = process.env.PORT
-const db = new Database()
 
 s.use(function assignId (req, res, next) {req.id = randomUUID(); next()})
 morgan.token('id', function getId(req) { return req.id});
@@ -19,21 +18,22 @@ s.use("/api/posts", postRoutes)
 s.use('/static', express.static("./static"))
 
 const server = http.createServer(s)
-server.listen(PORT, (err)=>{
+server.listen(PORT, async function(err){
  if (err) {
   console.error(`Server failed to start on port ${PORT}.`, err.message);
   process.exit(1);
  } else {
   console.log(`Server up and active on port: ${PORT}`);
+  await init()
  }
 })
 server.timeout = 10 * 1000
 
-const shutdown =()=>{
- db.shutdown()
+const gracefulExit =()=>{
+ shutdown()
  server.close()
  console.log("shutting down server!!!")
 }
 
-process.on('SIGINT', shutdown);
-process.on('SIGTERM', shutdown);
+process.on('SIGINT', gracefulExit);
+process.on('SIGTERM', gracefulExit);

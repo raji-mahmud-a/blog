@@ -1,5 +1,5 @@
 import createSlug from "../utils/createSlug.util.js"
-import db from "../db/database.config.js"
+import queries from "../db/queries.db.js"
 
 const addNewPost = async(req, res)=>{
  const { title, content, excerpt, status } = req.body
@@ -8,7 +8,7 @@ const addNewPost = async(req, res)=>{
  const Excerpt = (excerpt) ? excerpt : content.substring(0, 200) + '...'
  const Status = (status === 'published') ? status : 'draft'
 
- db.addNewPost(title, content, FeaturedImage, Slug, Excerpt, Status)
+ queries.addNewPost(title, content, FeaturedImage, Slug, Excerpt, Status)
 
  res.status(201).json({
   "success": true,

@@ -1,7 +1,7 @@
-import db from "../db/database.config.js"
+import queries from "../db/queries.db.js"
 
-const checkSlug=(slug)=>{
- return db.findSlug(slug)
+const checkSlug= async (slug)=>{
+ return await queries.checkSlug(slug)
 }
 
 export default checkSlug

@@ -1,4 +1,4 @@
-import db from "../db/database.config.js"
+import queries from "../db/queries.db.js"
 import checkSlug from "../utils/checkSlug.util.js"
 
 const deletePostBySlug = async(req, res)=>{
@@ -12,7 +12,7 @@ const deletePostBySlug = async(req, res)=>{
   })
  }
 
- db.deletePost(slug)
+ queries.deletePost(slug)
 
  res.status(200).json({
   success: true,

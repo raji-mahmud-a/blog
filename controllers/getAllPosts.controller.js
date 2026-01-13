@@ -1,7 +1,7 @@
-import db from "../db/database.config.js"
+import { query } from "../db/database.config.js"
 
 const getAllPosts = (req, res)=>{
- const posts = db.getAllPosts()
+ const posts = query("SELECT * from posts").rows
 
  res.status(200).json({
   success: true,

@@ -1,59 +1,52 @@
-import sqliteDB from "better-sqlite3"
-import path from 'path';
-import process from 'process';
+import { loadEnvFile } from "node:process"
+loadEnvFile()
 
-class Database {
- static instance
- constructor() {
-  if(Database.instance)return Database.instance
+import { Pool } from "pg"
 
-  try {
-   this.db = new sqliteDB(process.cwd() + "/env/app.db")
-   // **** SETUP DB PRAGMAs **** //
-    this.db.pragma('foreign_keys = ON');
-    this.db.pragma('journal_mode = WAL');
-    this.db.pragma('busy_timeout = 5000');
-    this.db.pragma('synchronous = NORMAL');
-   // create necessary tables
-   this.createTables()
+const connString = process.env.PG_CONNECTION_STRING
+if(!connString){
+	console.error("DATABASE CONNECTION STRING NOT FOUND", connString)
+	process.exit(1)
+}
+const pool = new Pool({
+	connectionString: connString,
+	ssl:{ rejectUnauthorized: false },
+	max: 20,
+	idleTimeoutMillis: 30000,
+	connectionTiumeoutMillis: 2000
+})
 
-   Database.instance = this
-   console.log("Database succesfully created \nPragmas succesfully running \nTables succesfully initialized and schemas succesfully set")
-  }catch(error){
-   console.error("Error creating Database", error)
-   process.exit(1)
-  }
- }
+export const query = (querystring, params) => pool.query(querystring, params)
 
- createTables(){
-   const tables =
-/*
-  something is wrong somewhere here so pls
-
-       FIX
-*/
+export const init = async function(){
+   const tableQuery =
     `
-     
-CREATE TABLE IF NOT EXISTS posts(
-      content VARCHAR(32768)
+	  CREATE TABLE IF NOT EXISTS posts(
+	  id SERIAL PRIMARY KEY
       featuredImage VARCHAR(255)
+	  title VARCHAR(50) NOT NULL
+      content TEXT NOT NULL
+      excerpt VARCHAR(255)
       slug VARCHAR(255) NOT NULL UNIQUE
       createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      status ENUM("draft", "published") DEFAULT "draft"
+      status TEXT CHECK(status IN ('draft', 'published')) DEFAULT "draft"
       viewCount INT DEFAULT 0
      );
     `
 
-    this.db.prepare(tables).run()
+    try{
+    	await query(tableQuery)
+    	console.log("Database initialized succesfully")
+    }catch(error){
+    	console.error("error creating Tables in Database", error)
+    	process.exit(1)
+    }
   }
 
-   shutdown(){
-    if(this.db) this.db.close()
-    console.log("server shutting down gracefully:::: \n Database closed")
-    process.exit(0)
-  }
+export const shutdown = async function(){
+  console.log("server shutting down gracefully:::: \n      Closing database pool")
+  await pool.end()
+  console.log("pool succesfully closed")    
+  process.exit(0)
 }
-
-
-export default Database

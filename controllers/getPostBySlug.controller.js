@@ -1,5 +1,5 @@
 import checkSlug from "../utils/checkSlug.util.js"
-import db from "../db/database.config.js"
+import queries from "../db/queries.db.js"
 import incrementViewCount from "../utils/incrementViewCount.util.js"
 
 const getPostBySlug = async (req, res)=>{
@@ -14,7 +14,7 @@ const getPostBySlug = async (req, res)=>{
   })
  }
 
- const post = db.getPostBySlug(slug)
+ const post = queries.getPostBySlug(slug)
  incrementViewCount(slug)
 
  res.status(200).json({

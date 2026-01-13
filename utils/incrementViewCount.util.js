@@ -1,7 +1,7 @@
-import db from "../db/database.config.js"
+import queries from "../db/queries.db.js"
 
 const incrementViewCount =(slug)=>{
- db.incrementViewCount(slug)
+ queries.incrementViews(slug)
 }
 
 export default incrementViewCount
