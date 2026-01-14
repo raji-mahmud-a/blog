@@ -3,8 +3,8 @@ import checkSlug from "../utils/checkSlug.util.js"
 
 const deletePostBySlug = async(req, res)=>{
  const slug = req.params.slug
- const post = checkSlug(slug)
- if(!post){
+ const post = await checkSlug(slug)
+  if(!post){
    return res.status(404).json({
    success: false,
    data: null,
@@ -12,7 +12,7 @@ const deletePostBySlug = async(req, res)=>{
   })
  }
 
- queries.deletePost(slug)
+ await queries.deletePost(slug)
 
  res.status(200).json({
   success: true,

@@ -5,17 +5,22 @@ import morgan from "morgan"
 import { randomUUID } from 'crypto';
 import { shutdown, init } from"./db/database.config.js"
 import http from "node:http"
+import errorHandler from "./middlewares/error.middleware.js"
 
 loadEnvFile()
 
 const s = express()
 const PORT = process.env.PORT
 
+/*
 s.use(function assignId (req, res, next) {req.id = randomUUID(); next()})
 morgan.token('id', function getId(req) { return req.id});
-s.use(morgan(":id :method :url :status :response-time ms - :res[content-length]"))
+*/
+
+s.use(morgan("dev"))
 s.use("/api/posts", postRoutes)
 s.use('/static', express.static("./static"))
+s.use(errorHandler)
 
 const server = http.createServer(s)
 server.listen(PORT, async function(err){

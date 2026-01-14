@@ -22,16 +22,16 @@ export const init = async function(){
    const tableQuery =
     `
 	  CREATE TABLE IF NOT EXISTS posts(
-	  id SERIAL PRIMARY KEY
-      featuredImage VARCHAR(255)
-	  title VARCHAR(50) NOT NULL
-      content TEXT NOT NULL
-      excerpt VARCHAR(255)
-      slug VARCHAR(255) NOT NULL UNIQUE
-      createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      status TEXT CHECK(status IN ('draft', 'published')) DEFAULT "draft"
-      viewCount INT DEFAULT 0
+	  id SERIAL PRIMARY KEY,
+      featured_image VARCHAR(255),
+	  title VARCHAR(50) NOT NULL,
+      content TEXT NOT NULL,
+      excerpt VARCHAR(255),
+      slug VARCHAR(255) NOT NULL UNIQUE,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      status TEXT CHECK(status IN ('draft', 'published')) DEFAULT 'draft',
+      view_count INT DEFAULT 0
      );
     `
 

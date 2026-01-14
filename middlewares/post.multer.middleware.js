@@ -1,8 +1,9 @@
-
+import fs from "node:fs"
 import multer from "multer";
 import path from "path"
 
 const allowedTypes = [
+  "image/jpg`",
   "image/jpeg",
   "image/png",
   "image/gif",
@@ -13,6 +14,12 @@ const allowedTypes = [
   "image/tiff",
   "image/bmp"
 ]
+
+const uploadDir = path.join(process.cwd(), "static", "uploads")
+
+if(!fs.existsSync(uploadDir)){
+  fs.mkdirSync(uploadDir, { recursive: true })
+}
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) { cb(null, './static/uploads') },
@@ -28,7 +35,7 @@ const upload = multer({
  storage: storage,
   limits: {
    fields: 4,
-   fileSize: 5 * 1024 * 1024, // limit image size to 5MB
+   fileSize: 5 * 1024 * 1024, //  limit image size to 5MB
    files: 1,
    parts: 5
  },

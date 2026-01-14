@@ -1,7 +1,7 @@
-import { query } from "../db/database.config.js"
+import queries from "../db/queries.db.js"
 
-const getAllPosts = (req, res)=>{
- const posts = query("SELECT * from posts").rows
+const getAllPosts = async(req, res)=>{
+ const posts = await queries.getAllPosts()
 
  res.status(200).json({
   success: true,
