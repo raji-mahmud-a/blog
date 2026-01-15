@@ -1,19 +1,19 @@
-import slugify from 'slugify';
+import slugify from "slugify";
 
 const createSlug =(text)=>{
 
- if(!text)return undefined
+ if(!text)return undefined;
 
  const slug = slugify(text, {
-  replacement: '-',
+  replacement: "-",
   remove: /[*+~.()'"!:@]/g,
   lower: true,
   strict: true,
-  locale: 'en',
+  locale: "en",
   trim: true
  });
 
- return slug
-}
+ return slug;
+};
 
-export default createSlug
+export default createSlug;

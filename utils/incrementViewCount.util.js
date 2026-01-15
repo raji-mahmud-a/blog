@@ -1,7 +1,7 @@
-import queries from "../db/queries.db.js"
+import queries from "../db/queries.db.js";
 
 const incrementViewCount =(slug)=>{
- queries.incrementViews(slug)
-}
+ queries.incrementViews(slug);
+};
 
-export default incrementViewCount
+export default incrementViewCount;

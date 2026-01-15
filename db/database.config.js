@@ -1,25 +1,25 @@
-import { loadEnvFile } from "node:process"
-loadEnvFile()
+import { loadEnvFile } from "node:process";
+loadEnvFile();
 
-import { Pool } from "pg"
+import { Pool } from "pg";
 
-const connString = process.env.PG_CONNECTION_STRING
+const connString = process.env.PG_CONNECTION_STRING;
 if(!connString){
-	console.error("DATABASE CONNECTION STRING NOT FOUND", connString)
-	process.exit(1)
+ console.error("DATABASE CONNECTION STRING NOT FOUND", connString);
+ process.exit(1);
 }
 const pool = new Pool({
-	connectionString: connString,
-	ssl:{ rejectUnauthorized: false },
-	max: 20,
-	idleTimeoutMillis: 30000,
-	connectionTiumeoutMillis: 2000
-})
+ connectionString: connString,
+ ssl:{ rejectUnauthorized: false },
+ max: 20,
+ idleTimeoutMillis: 30000,
+ connectionTiumeoutMillis: 2000
+});
 
-export const query = (querystring, params) => pool.query(querystring, params)
+export const query = (querystring, params) => pool.query(querystring, params);
 
 export const init = async function(){
-   const tableQuery =
+ const tableQuery =
     `
 	  CREATE TABLE IF NOT EXISTS posts(
 	  id SERIAL PRIMARY KEY,
@@ -33,20 +33,33 @@ export const init = async function(){
       status TEXT CHECK(status IN ('draft', 'published')) DEFAULT 'draft',
       view_count INT DEFAULT 0
      );
-    `
 
-    try{
-    	await query(tableQuery)
-    	console.log("Database initialized succesfully")
-    }catch(error){
-    	console.error("error creating Tables in Database", error)
-    	process.exit(1)
-    }
-  }
+     CREATE TABLE IF NOT EXISTS comments(
+     	id SERIAL PRIMARY KEY,
+     	content VARCHAR(1024) NOT NULL,
+     	parent_post VARCHAR(255) NOT NULL UNIQUE,
+     	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+     	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+     	view_count INT DEFAULT 0,
+     	FOREIGN KEY (parent_post)
+     		REFERENCES posts(slug)
+     		ON DELETE CASCADE
+     		ON UPDATE CASCADE
+     );
+    `;
+
+ try{
+    	await query(tableQuery);
+    	console.log("Database initialized succesfully");
+ }catch(error){
+    	console.error("error creating Tables in Database", error);
+    	process.exit(1);
+ }
+};
 
 export const shutdown = async function(){
-  console.log("server shutting down gracefully:::: \n      Closing database pool")
-  await pool.end()
-  console.log("pool succesfully closed")    
-  process.exit(0)
-}
+ console.log("server shutting down gracefully:::: \n      Closing database pool");
+ await pool.end();
+ console.log("pool succesfully closed");    
+ process.exit(0);
+};

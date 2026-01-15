@@ -1,13 +1,13 @@
-import queries from "../db/queries.db.js"
+import queries from "../db/queries.db.js";
 
 const getAllPosts = async(req, res)=>{
- const posts = await queries.getAllPosts()
+ const posts = await queries.getAllPosts();
 
  res.status(200).json({
   success: true,
   data: posts,
   error: null
- })
-}
+ });
+};
 
-export default getAllPosts
+export default getAllPosts;
