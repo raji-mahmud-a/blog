@@ -8,7 +8,7 @@ if(!connString){
  console.error("DATABASE CONNECTION STRING NOT FOUND", connString);
  process.exit(1);
 }
-const pool = new Pool({
+export const pool = new Pool({
  connectionString: connString,
  ssl:{ rejectUnauthorized: false },
  max: 20,
@@ -44,7 +44,17 @@ export const init = async function(){
      	FOREIGN KEY (parent_post)
      		REFERENCES posts(slug)
      		ON DELETE CASCADE
-     		ON UPDATE CASCADE
+     );
+
+     CREATE TABLE IF NOT EXISTS tags(
+     	id SERIAL PRIMARY KEY,
+     	name VARCHAR(50) UNIQUE NOT NULL
+     );
+
+     CREATE TABLE IF NOT EXISTS post_tags(
+     	post_id INTEGER REFERENCES posts(id) ON DELETE CASCADE,
+     	tag_id INTEGER REFERENCES tags(id) ON DELETE CASCADE,
+     	PRIMARY KEY (post_id, tag_id)
      );
     `;
 

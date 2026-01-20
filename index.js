@@ -13,10 +13,23 @@ loadEnvFile();
 const s = express();
 const PORT = process.env.PORT;
 
-/*
-s.use(function assignId (req, res, next) {req.id = randomUUID(); next()})
+s.use(function assignId (req, res, next) {
+ req.id = randomUUID(); 
+
+ const original = res.json
+
+ res.json = function(data){
+ 	const modifiedData = {
+ 		requestID: req.id,
+ 		...data
+ 	}
+
+ 	return original.call(this, modifiedData)
+ }
+
+ next()
+})
 morgan.token('id', function getId(req) { return req.id});
-*/
 
 s.use(morgan("dev"));
 s.use("/api/posts", postRoutes);

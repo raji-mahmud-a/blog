@@ -26,7 +26,20 @@ const postBody = z.object({
  title: z.string().min(5).max(200),
  content: z.string().min(50).max(1000),
  excerpt: z.string().max(200).optional(),
- status: z.enum(["published", "draft"]).default("draft").catch("draft")
+ status: z.enum(["published", "draft"]).default("draft").catch("draft"),
+ tags: z
+   .array(
+     z.string()
+       .trim()
+       .min(1, "Tag cannot be empty")
+       .transform(s => s.toLowerCase())
+   )
+   .min(1, "At least one tag required")
+   .max(5, "maximum of 5 tags allowed.")
+   .refine(
+     tags => new Set(tags).size === tags.length,
+     { message: "Tags must be unique" }
+   ),
 });
 
 export const validatePostBodyEndpoint =(req, res, next)=>{
